@@ -1,3 +1,5 @@
+
+
 import logging
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
@@ -53,25 +55,27 @@ def check_user_input(update: Update, context: CallbackContext)->int:
 def get_tickerprice(update: Update, context:CallbackContext):
     ticker_symbol = update.message.text
     print_price(update, context, ticker_symbol)
-    return prompt_user
+    prompt = "Send another ticker to get its price, or use /start to return to the main menu and " \
+        "/cancel to exit the conversation"
+    update.message.reply_text(prompt)
+    return 
     
 def get_tickernews(update: Update, context:CallbackContext):
     ticker_symbol = update.message.text
     print_headlines(update, context, ticker_symbol)
-    return prompt_user
+    prompt = "Send another ticker to get latest headlines, or use /start to return to the main menu and " \
+        "/cancel to exit the conversation"
+    update.message.reply_text(prompt)
+    return 
 
 def get_tickersymbol(update: Update, context:CallbackContext):
     company = update.message.text
     print_tickers(update, context, company)
-    return prompt_user
-
-def prompt_user(update: Update, context:CallbackContext):
-    prompt = "If you would like to search for new information, use /start to return to the menu\n\n" \
-        + "If you would like to end the conversation, use /cancel"
+    prompt = "Send another company name to get its ticker symbol, or use /start to return to the main menu and " \
+        "/cancel to exit the conversation"
     update.message.reply_text(prompt)
-    return
-    
-    
+    return 
+        
 
 # Web scraping functions
 
@@ -88,21 +92,26 @@ def price_search(ticker_symbol):
     req = Request(url=url, headers={'user-agent': 'my-app/0.0.1'})
     response = urlopen(req)
     soup = BeautifulSoup(response, "lxml")
-    soup = soup.findAll('li',attrs={'class': 'kv__item'})
+    
     
     # Create a list for labels and corresponding values
     labels = []
     values = []
     
+    ip = soup.find('h2', attrs={'class':'intraday__price'}).get_text()
+    ip = ip.replace("\n","").rstrip()
+    
+    labels.append("Intraday Price")
+    values.append(ip)
+    
+    soup = soup.findAll('li',attrs={'class': 'kv__item'})
     for x in soup:
         label = x.find('small').contents[0]
         value = x.find('span').contents[0]
         labels.append(label)
         values.append(value)
     
-    # These label numbers were chosen because I did not want to display all of the price statistics
-    # on MArketWatch - can be changed.
-    label_numbers= [1,2,7,8,9,10,12,13,14,15]
+    label_numbers= [1,2,3,7,8,9,10,12,13,14,15]
     text = ""
     for label_number in label_numbers:
         text += labels[label_number] + ": " + values[label_number] + "\n"
@@ -185,7 +194,7 @@ def company_search(search_string):
     
         # this prints out the top 5 rows in the form of symbol, company name
         for i in range(len(result)):
-            text += ("Ticker " + symbols[i] + " for company" + company_names[i]) + '\n\n'
+            text += ("Ticker " + symbols[i] + " for company " + company_names[i]) + '\n\n'
     else:
         text = "Sorry, no results were found."
     return text
@@ -233,6 +242,7 @@ def main():
     # Start the Bot
     updater.start_webhook(listen='0.0.0.0',port=int(PORT),url_path=TOKEN,
                           webhook_url='...'+TOKEN)
+
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
