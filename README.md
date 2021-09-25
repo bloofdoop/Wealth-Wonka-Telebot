@@ -1,6 +1,8 @@
 # Wealth-Wonka-Telebot
 I created a web parser Telegram bot for users to retrieve market news and daily prices based on a stock ticker symbol. This was part of a side project I had (wealthwonka.com) - a casual investing blog that I co-created alongside my good friends in 2020. It was meant to be a way to teach myself foundational financial modelling tools, and document that knowledge through articles and stock picks. Putting together the Telegram bot was also a way for me to train my Python skills and the first application I have successfully deployed live.
 
+You can interact with the bot n Telegram through @wealthwonka_bot. Because the application is hosted on the free Heroku server, it will go into snooze every 30 minutes of inactivity. Therefore, the first time you type in the command "/start", it may take 10 seconds to respond. After which, the bot has been designed to be intuitive to use.
+
 # Using python-telegram-bot
 The main package I used was python-telegram-bot to run commands. I took inspiration from conversationbot.py (https://github.com/python-telegram-bot/python-telegram-bot/blob/master/examples/conversationbot.py) to create my ConversationHandlers and state functions.
 
